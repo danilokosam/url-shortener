@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const urlSchema = new mongoose.Schema(
   {
@@ -27,7 +27,4 @@ const urlSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Add an index for search optimisation
-urlSchema.index({ shortCode: 1 });
-
-export default mongoose.model('Url', urlSchema);
+export default mongoose.model("Url", urlSchema);
