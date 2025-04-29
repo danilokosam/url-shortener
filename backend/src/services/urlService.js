@@ -30,6 +30,8 @@ export const getUrlByShortCode = async (shortCode) => {
     throw new AppError("Short URL not found", 404);
   }
 
+  // Update the clickHistory
+  url.clickHistory.push({ timestamp: new Date() });
   // Increment the click count
   url.clicks += 1;
   await url.save();
