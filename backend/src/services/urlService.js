@@ -46,3 +46,9 @@ export const findUrlByShortCode = async (shortCode) => {
   }
   return url;
 };
+
+export const changeUrl = async (newUrl, shortCode) => {
+  const url = await findUrlByShortCode(shortCode)
+  const newParameter = await url.updateOne({ originalUrl: newUrl })
+  return newParameter
+}

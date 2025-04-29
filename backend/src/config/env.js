@@ -14,7 +14,10 @@ const env = cleanEnv(process.env, {
     choices: ["development", "production", "test"],
     default: "development",
   }),
+  REDIS_PORT: str({ desc: "Redis connection PORT" }),
+  REDIS_HOST: str({ desc: "Redis connection PORT" }),
+  REDIS_PASSWORD: str({ desc: "Redis connection PASSWORD" })
 });
 
 // Export the cleaned environment variables
-export const { MONGODB_URI, PORT, NODE_ENV } = env;
+export const { MONGODB_URI, PORT, NODE_ENV, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } = env;

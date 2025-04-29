@@ -11,4 +11,6 @@ router.get("/:shortCode", urlController.redirectUrl);
 // Get URL stats route
 router.get("/stats/:shortCode", urlController.getUrlStats);
 
+router.patch("/:shortCode", urlController.changeUrl);
+
 export default router;

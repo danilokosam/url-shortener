@@ -1,11 +1,13 @@
 import app from "./app.js";
 import { connectDB, PORT } from "./config/index.js";
+import client from './config/redis.js'
 
 const startServer = async () => {
   let server;
   try {
     // Connect to the database
     await connectDB();
+    await client.connect()
     console.log("Database connected successfully!");
 
     // Start the server
