@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import Url from "../models/urlModel.js";
+import { AppError } from "../utils/appError.js";
 
 export const createShortUrl = async (originalUrl) => {
   let shortCode = nanoid(8); // Generate a unique short code
@@ -26,7 +27,7 @@ export const getUrlByShortCode = async (shortCode) => {
   // Find the URL entry in the database using the short code
   const url = await Url.findOne({ shortCode });
   if (!url) {
-    throw new Error("URL not found");
+    throw new AppError("Short URL not found", 404);
   }
 
   // Increment the click count

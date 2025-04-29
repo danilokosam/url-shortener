@@ -1,10 +1,11 @@
 import * as urlService from "../services/urlService.js";
+import { AppError } from "../utils/appError.js";
 
 export const shortenUrl = async (req, res, next) => {
   try {
     const { originalUrl } = req.body;
     if (!originalUrl) {
-      return res.status(400).json({ error: "Original URL is required" });
+      return next(new AppError("originalUrl is required", 400));
     }
 
     const url = await urlService.createShortUrl(originalUrl);
