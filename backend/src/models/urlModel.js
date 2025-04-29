@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const urlSchema = new mongoose.Schema(
   {
@@ -15,6 +15,14 @@ const urlSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    clickHistory: [
+      {
+        timestamp: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
@@ -22,4 +30,4 @@ const urlSchema = new mongoose.Schema(
 // Add an index for search optimisation
 urlSchema.index({ shortCode: 1 });
 
-export default mongoose.model("Url", urlSchema);
+export default mongoose.model('Url', urlSchema);
