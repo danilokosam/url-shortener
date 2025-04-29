@@ -39,7 +39,7 @@ export const redirectUrl = async (req, res, next) => {
 export const getUrlStats = async (req, res, next) => {
   try {
     const { shortCode } = req.params;
-    const url = await urlService.getUrlByShortCode(shortCode);
+    const url = await urlService.findUrlByShortCode(shortCode);
 
     const clicksByDay = url.clickHistory.reduce((acc, click) => {
       const date = click.timestamp.toISOString().split("T")[0];
