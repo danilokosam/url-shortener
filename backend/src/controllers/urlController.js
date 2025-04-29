@@ -1,11 +1,15 @@
 import * as urlService from "../services/urlService.js";
 import { AppError } from "../utils/appError.js";
-
+import validUrl from "valid-url";
 export const shortenUrl = async (req, res, next) => {
   try {
     const { originalUrl } = req.body;
     if (!originalUrl) {
       return next(new AppError("originalUrl is required", 400));
+    }
+
+    if (!validUrl.isWebUri(originalUrl)) {
+      return next(new AppError("Invalid URL format", 400));
     }
 
     const url = await urlService.createShortUrl(originalUrl);
