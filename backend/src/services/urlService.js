@@ -38,3 +38,11 @@ export const getUrlByShortCode = async (shortCode) => {
 
   return url;
 };
+
+export const findUrlByShortCode = async (shortCode) => {
+  const url = await Url.findOne({ shortCode });
+  if (!url) {
+    throw new AppError("Short URL not found", 404);
+  }
+  return url;
+};
