@@ -3,7 +3,7 @@ import * as urlController from "../controllers/urlController.js";
 const router = express.Router();
 
 // Shorten URL route
-router.post("/shorten", urlController.shortenUrl);
+router.post("/shorten", urlController.shortenUrlWithValidation);
 
 // Redirect to original URL route
 router.get("/:shortCode", urlController.redirectUrl);
