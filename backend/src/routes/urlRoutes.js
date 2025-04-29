@@ -8,4 +8,7 @@ router.post("/shorten", urlController.shortenUrl);
 // Redirect to original URL route
 router.get("/:shortCode", urlController.redirectUrl);
 
+// Get URL stats route
+router.get("/stats/:shortCode", urlController.getUrlStats);
+
 export default router;
