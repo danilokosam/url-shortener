@@ -1,6 +1,6 @@
 import * as urlService from "../services/urlService.js";
 import { tryCatchFn } from "../utils/tryCatch.js";
-import { shortenUrlSchema } from "../schemas/urlSchema.js";
+import { shortenUrlSchema, shortenUrlSchemaChange } from "../schemas/urlSchema.js";
 import validate from "../middlewares/validationMiddleware.js";
 import client from '../config/redis.js';
 
@@ -68,6 +68,11 @@ export const changeUrl = tryCatchFn(async (req, res, _next) => {
   await client.del(`url:${shortCode}`)
   return res.status(200).json(url)
 })
+
+export const changeUrlWithValidation = [
+  validate(shortenUrlSchemaChange),
+  changeUrl
+]
 
 // export const shortenUrlWithValidation = [validate(shortenUrlSchema), shortenUrl];
 // export const shortenUrlWithAuthAndValidation = [authMiddleware, validate(shortenUrlSchema), shortenUrl]; <- For protected routes
