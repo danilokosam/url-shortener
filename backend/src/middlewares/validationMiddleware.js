@@ -1,5 +1,6 @@
 import { AppError } from "../utils/appError.js";
 import { tryCatchFn } from "../utils/tryCatch.js";
+import logger from "../utils/logger.js";
 
 /**
  * Creates a middleware to validate incoming requests against a Zod schema.
@@ -9,6 +10,14 @@ import { tryCatchFn } from "../utils/tryCatch.js";
 const validate = (schema) => {
   // Wrap the validation logic in tryCatchFn to handle errors gracefully
   const validateHandler = tryCatchFn(async (req, _res, next) => {
+    logger.info("Validating incoming request...", {
+      url: req.url,
+      method: req.method,
+      body: req.body,
+      params: req.params,
+      query: req.query,
+    });
+
     // Parse the request data (body, params, query) using the provided schema
     const result = await schema.safeParseAsync({
       body: req.body,
@@ -37,6 +46,13 @@ const validate = (schema) => {
       params: result.data.params || {},
       query: result.data.query || {},
     };
+
+    logger.info("Request validated successfully", {
+      url: req.url,
+      method: req.method,
+      validatedData: req.validatedData,
+    });
+
     next();
   });
 

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { MONGODB_URI } from "./env.js";
+import logger from "../utils/logger.js";
 
 // Connect to MongoDB using Mongoose
 export const connectDB = async () => {
@@ -9,7 +10,7 @@ export const connectDB = async () => {
       throw new Error("MongoDB URI is not defined in environment variables.");
     }
 
-    console.log("Connecting to MongoDB...");
+    logger.info("Connecting to MongoDB...");
 
     const options = {
       serverApi: {
@@ -21,26 +22,32 @@ export const connectDB = async () => {
 
     // Mongoose connection events
     mongoose.connection.on("connecting", () => {
-      console.log("Connecting to MongoDB... ⏳");
+      logger.info("Connecting to MongoDB... ⏳");
     });
 
     mongoose.connection.on("connected", () => {
-      console.log("Connected to MongoDB! ⭐⭐⭐");
+      logger.info("Connected to MongoDB! ⭐⭐⭐");
     });
 
     mongoose.connection.on("disconnected", () => {
-      console.log("Disconnected from MongoDB. Attempting to reconnect... 🔄");
+      logger.warn("Disconnected from MongoDB. Attempting to reconnect... 🔄");
     });
 
     mongoose.connection.on("error", (error) => {
-      console.error("MongoDB connection error:", error);
+      logger.error("MongoDB connection error:", {
+        error: error.message,
+        stack: error.stack,
+      });
     });
 
     await mongoose.connect(connectionString, options);
 
     return mongoose.connection;
   } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
+    console.error("Error connecting to MongoDB:", {
+      error: error.message,
+      stack: error.stack,
+    });
     throw error;
   }
 };
@@ -49,10 +56,13 @@ export const connectDB = async () => {
 process.on("SIGINT", async () => {
   try {
     await mongoose.connection.close();
-    console.log("MongoDB connection closed 👋");
+    logger.info("MongoDB connection closed 👋");
     process.exit(0);
   } catch (error) {
-    console.error("Error closing MongoDB connection:", error);
+    console.error("Error closing MongoDB connection:", {
+      error: error.message,
+      stack: error.stack,
+    });
     process.exit(1);
   }
 });

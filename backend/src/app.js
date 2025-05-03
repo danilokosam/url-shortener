@@ -4,6 +4,7 @@ import urlRoutes from "./routes/urlRoutes.js";
 import { errorHandler } from "./middlewares/errorMiddleware.js";
 import morgan from "morgan";
 import { v4 as uuidv4 } from "uuid";
+import logger from "./utils/logger.js";
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use("/api/v1/urls", urlRoutes);
 
 // Health check route
 app.get("/health", (_req, res) => {
+  logger.info("Health check endpoint accessed");
   res.status(200).json({ message: "Server is running!" });
 });
 

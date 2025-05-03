@@ -11,6 +11,7 @@
     "redis": "^4.7.0",
     "uuid": "^11.1.0",
     "valid-url": "^1.0.9",
+    "winston": "^3.17.0",
     "zod": "^3.24.3"
   },
   "name": "backend",
