@@ -13,8 +13,9 @@ export const shortenUrl = tryCatchFn(async (req, res, _next) => {
     originalUrl: req.validatedData.body.originalUrl,
   });
 
+  const { id } = req.user
   const { originalUrl } = req.validatedData.body;
-  const url = await urlService.createShortUrl(originalUrl);
+  const url = await urlService.createShortUrl(originalUrl, id);
 
   logger.info("URL shortened successfully", {
     originalUrl: url.originalUrl,
@@ -38,23 +39,8 @@ export const redirectUrl = tryCatchFn(async (req, res, _next) => {
     shortCode,
   });
 
-  const reply = await client.get(`url:${shortCode}`);
-  if (reply) {
-    logger.info("Cache hit: Redirecting using cached URL", {
-      shortCode,
-      originalUrl: reply,
-    });
-    return res.redirect(301, reply);
-  }
-
-  logger.info("Cache miss: Fetching URL from database", { shortCode });
   const url = await urlService.getUrlByShortCode(shortCode);
 
-  logger.info("Caching URL in Redis", {
-    shortCode,
-    originalUrl: url.originalUrl,
-  });
-  await client.set(`url:${shortCode}`, url.originalUrl, { EX: 60 * 5 });
   await client.del(`url:stats:${shortCode}`);
   logger.info("Invalidated stats cache after redirect", { shortCode });
 
@@ -67,6 +53,7 @@ export const redirectUrl = tryCatchFn(async (req, res, _next) => {
 
 export const getUrlStats = tryCatchFn(async (req, res, _next) => {
   const { shortCode } = req.params;
+  const { id } = req.user
 
   logger.info("Starting URL stats retrieval process", { shortCode });
 
@@ -77,7 +64,7 @@ export const getUrlStats = tryCatchFn(async (req, res, _next) => {
   }
 
   logger.info("Cache miss: Fetching stats from database", { shortCode });
-  const url = await urlService.findUrlByShortCode(shortCode);
+  const url = await urlService.findUrlByShortCode(shortCode, id);
 
   const clicksByDay = url.clickHistory.reduce((acc, click) => {
     const date = click.timestamp.toISOString().split("T")[0];
@@ -92,6 +79,7 @@ export const getUrlStats = tryCatchFn(async (req, res, _next) => {
     clicksByDay,
     createdAt: url.createdAt,
     updatedAt: url.updatedAt,
+    author: url.author
   };
 
   logger.info("Caching URL stats in Redis", { shortCode });
@@ -114,9 +102,10 @@ export const shortenUrlWithValidation = [
 export const changeUrl = tryCatchFn(async (req, res, _next) => {
   const { shortCode } = req.params;
   const { newUrl } = req.body;
+  const { id } = req.user;
 
   logger.info("Starting URL update process", { shortCode, newUrl });
-  const url = await urlService.changeUrl(newUrl, shortCode);
+  const url = await urlService.changeUrl(newUrl, shortCode, id);
 
   logger.info("Invalidating caches after URL update", { shortCode });
   await client.del(`url:stats:${shortCode}`);

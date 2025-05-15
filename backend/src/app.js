@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser"
 import urlRoutes from "./routes/urlRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import { errorHandler } from "./middlewares/errorMiddleware.js";
 import morgan from "morgan";
 import { v4 as uuidv4 } from "uuid";
@@ -31,8 +33,10 @@ app.use(
 );
 
 app.use(cors());
+app.use(cookieParser())
 app.use(express.json());
 app.use("/api/v1/urls", urlRoutes);
+app.use("/api/v1/users", userRoutes);
 
 // Health check route
 app.get("/health", (_req, res) => {

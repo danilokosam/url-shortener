@@ -7,7 +7,7 @@ const envPath = `.env.${process.env.NODE_ENV || "development"}`;
 logger.info(`Loading environment file: ${envPath}`);
 config({ path: envPath });
 
-let MONGODB_URI, PORT, NODE_ENV, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT;
+let MONGODB_URI, PORT, NODE_ENV, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT, JWT_ACCESS_SECRET, JWT_REFRESH_SECRET;
 
 try {
   // Validate and clean environment variables
@@ -21,10 +21,12 @@ try {
     REDIS_PORT: str({ desc: "Redis connection PORT" }),
     REDIS_HOST: str({ desc: "Redis connection HOST" }),
     REDIS_PASSWORD: str({ desc: "Redis connection PASSWORD" }),
+    JWT_ACCESS_SECRET: str({ desc: "Secret for encode the access token" }),
+    JWT_REFRESH_SECRET: str({ desc: "Secret for encode the refresh token" })
   });
 
   // Assign the cleaned environment variables
-  ({ MONGODB_URI, PORT, NODE_ENV, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } =
+  ({ MONGODB_URI, PORT, NODE_ENV, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT, JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } =
     env);
 
   logger.info("Environment variables loaded and validated successfully", {
@@ -39,4 +41,4 @@ try {
   throw error; // Re-throw the error to halt the application
 }
 
-export { MONGODB_URI, PORT, NODE_ENV, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT };
+export { MONGODB_URI, PORT, NODE_ENV, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT, JWT_ACCESS_SECRET, JWT_REFRESH_SECRET };

@@ -3,7 +3,7 @@ import Url from "../models/urlModel.js";
 import { AppError } from "../utils/appError.js";
 import logger from "../utils/logger.js";
 
-export const createShortUrl = async (originalUrl) => {
+export const createShortUrl = async (originalUrl, author) => {
   logger.info("Starting short URL creation process", { originalUrl });
 
   let shortCode = nanoid(8); // Generate a unique short code
@@ -26,6 +26,7 @@ export const createShortUrl = async (originalUrl) => {
   const url = new Url({
     originalUrl,
     shortCode,
+    author
   });
   await url.save();
   logger.info("Short URL saved to database", {
@@ -59,9 +60,9 @@ export const getUrlByShortCode = async (shortCode) => {
   return url;
 };
 
-export const findUrlByShortCode = async (shortCode) => {
+export const findUrlByShortCode = async (shortCode, author) => {
   logger.info("Finding URL by short code for stats", { shortCode });
-  const url = await Url.findOne({ shortCode });
+  const url = await Url.findOne({ shortCode, author }).populate('author');
   if (!url) {
     throw new AppError("Short URL not found", 404);
   }
@@ -72,10 +73,10 @@ export const findUrlByShortCode = async (shortCode) => {
   return url;
 };
 
-export const changeUrl = async (newUrl, shortCode) => {
+export const changeUrl = async (newUrl, shortCode, author) => {
   logger.info("Starting URL change process in service", { shortCode, newUrl });
 
-  const url = await findUrlByShortCode(shortCode);
+  const url = await findUrlByShortCode(shortCode, author);
   const newParameter = await url.updateOne({ originalUrl: newUrl });
 
   logger.info("URL changed successfully", {
